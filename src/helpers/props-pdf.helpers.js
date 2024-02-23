@@ -1,4 +1,5 @@
 import { defaultSizes } from "./config";
+import { convertPdfToCanvases } from "./pdf-dist.helpers";
 import { getPdf } from "./pdf-lib.helpers";
 
 export const getPdfsProps = async (files) => {
@@ -20,6 +21,8 @@ export const getPdfsProps = async (files) => {
     let description;
     try {
       if (pdf) {
+        const canvases = convertPdfToCanvases(href);
+        console.log(canvases);
         pagesCount = pdf.getPageCount();
         sizes = pdf.getPages().map((currPage) => {
           const { width, height } = currPage.getSize();

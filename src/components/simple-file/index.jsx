@@ -41,11 +41,15 @@ const SimpleFile = ({ props, index }) => {
           <div key={item}>
             <strong>{item}: </strong>
             {pdfsProps[index]?.description[item]
-              ? pdfsProps[index].description[item].map((el, i, array) => {
-                  if (i === 0 || el - array[i - 1] !== 1)
-                    return i !== 0 ? `, ${el}` : el;
-                  if (array[i + 1] - el !== 1) return -el;
-                })
+              ? pdfsProps[index].description[item].map((el, i, array) =>
+                  i === 0 || el - array[i - 1] !== 1
+                    ? i !== 0
+                      ? `, ${el}`
+                      : el
+                    : array[i + 1] - el !== 1
+                    ? -el
+                    : ""
+                )
               : ""}
           </div>
         ))}
