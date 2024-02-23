@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-globals */
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { defaultFormData } from "../../helpers/config";
 import { getPdfsProps } from "../../helpers/props-pdf.helpers";
 import Loader from "../loader";
 import Path from "../path";
@@ -31,7 +30,7 @@ const Content = (props) => {
   //set pdf props
   useEffect(() => {
     const setterPdfsProps = async () => {
-      const currPdfsProps = await getPdfsProps(files, defaultFormData);
+      const currPdfsProps = await getPdfsProps(files);
 
       setPdfsProps((state) => {
         const result = Object.assign(state, currPdfsProps);
@@ -56,7 +55,25 @@ const Content = (props) => {
 
   let numFiles = 0;
 
-  // JSX component with params of each pdf file
+  const fileList = Object.keys(pdfsProps)?.map((pathname, index) =>
+    pathname !== "folderList" ? (
+      <div key={`${index}key${pathname}`}>
+        <Path pathname={pathname} />
+        {pdfsProps[pathname].map((currPdfProps, index) => {
+          ++numFiles;
+          return (
+            <SimpleFile
+              key={`${index}key${currPdfProps.name}${pathname}`}
+              props={currPdfProps}
+              index={`${pathname} ${currPdfProps.name}`}
+            />
+          );
+        })}
+      </div>
+    ) : (
+      ""
+    )
+  );
 
   return (
     <Wrapper>
@@ -89,25 +106,7 @@ const Content = (props) => {
           </>
         )}
       </FixedHeightDiv>
-      {Object.keys(pdfsProps)?.map((pathname, index) =>
-        pathname !== "folderList" ? (
-          <div key={`${index}key${pathname}`}>
-            <Path pathname={pathname} />
-            {pdfsProps[pathname].map((currPdfProps, index) => {
-              ++numFiles;
-              return (
-                <SimpleFile
-                  key={`${index}key${currPdfProps.name}${pathname}`}
-                  props={currPdfProps}
-                  index={`${pathname} ${currPdfProps.name}`}
-                />
-              );
-            })}
-          </div>
-        ) : (
-          ""
-        )
-      )}
+      {fileList}
     </Wrapper>
   );
 };
@@ -154,7 +153,7 @@ const FolderLabel = styled.label`
 const FixedHeightDiv = styled.div`
   width: 100%;
   padding: 20px;
-  height: 400px;
+  min-height: 400px;
   display: flex;
   margin-left: 25%;
 `;

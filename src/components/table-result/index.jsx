@@ -7,7 +7,6 @@ import { useState } from "react";
 const TableResult = (props) => {
   const pdfsProps = useSelector((state) => state.pdfPropsReducer);
   const [ammountsPdfsProps, setAmmountsPdfsProps] = useState({});
-  useEffect(() => console.log({ ammountsPdfsProps }), [ammountsPdfsProps]);
   useEffect(
     () => setAmmountsPdfsProps(getAmountsPdfProps(pdfsProps)),
     [pdfsProps]

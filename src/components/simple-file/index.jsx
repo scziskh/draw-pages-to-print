@@ -10,6 +10,12 @@ const SimpleFile = ({ props, index }) => {
   const pdfsProps = useSelector((state) => state.pdfPropsReducer);
   const { updatePdfProps } = pdfsPropsSlice.actions;
   const dispatch = useDispatch();
+  const [sizes, setSizes] = useState([]);
+
+  useEffect(
+    () => setSizes(Array.from(new Set(pdfsProps[index]?.sizes))),
+    [pdfsProps, index]
+  );
 
   const { getValues } = useForm({
     mode: `onBlur`,
@@ -30,13 +36,28 @@ const SimpleFile = ({ props, index }) => {
           </a>
         }
       </FileName>
+      <div>
+        {sizes?.map((item) => (
+          <div key={item}>
+            <strong>{item}: </strong>
+            {pdfsProps[index]?.description[item]
+              ? pdfsProps[index].description[item].map((el, i, array) => {
+                  if (i === 0 || el - array[i - 1] !== 1)
+                    return i !== 0 ? `, ${el}` : el;
+                  if (array[i + 1] - el !== 1) return -el;
+                })
+              : ""}
+          </div>
+        ))}
+      </div>
       <PagesNumber>{pdfsProps?.[index]?.pagesCount}</PagesNumber>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.form`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 4fr 100px;
   padding: 10px;
   border: 1px solid #212121;
   background-color: ${(props) => {
@@ -53,7 +74,6 @@ const FileName = styled.div`
   }
   overflow: hidden;
   padding: 10px;
-  width: 90%;
   white-space: nowrap;
 `;
 const PagesNumber = styled.div`

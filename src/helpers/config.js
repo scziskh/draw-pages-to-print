@@ -1,21 +1,9 @@
-// parameters of sum pdfsProps
-export const totalPdfsPropsParamsArray = [
-  `grayscale-print`,
-  `color-print`,
-  `color-paper`,
-  `sheetsCount`,
-  `perforationCount`,
-  `staple`,
-  `folder`,
-  `badFiles`,
-];
+export const defaultSizes = [210, 297, 420, 594, 841, 1189];
 
-export const defaultFormData = {
-  sides: 2,
-  isPerforation: true,
-  isBinding: true,
-  isTwoPerPage: false,
-  maxSheetsStaples: 35,
-  print: "grayscale-print",
-  copiesCount: 1,
+export const internationalSizes = {
+  "297×210": "A4",
+  "420×297": "A3",
+  "594×420": "A2",
+  "841×594": "A1",
+  "1189×841": "A0",
 };

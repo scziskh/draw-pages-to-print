@@ -1,3 +1,4 @@
+import { defaultSizes } from "./config";
 import { getPdf } from "./pdf-lib.helpers";
 
 export const getPdfsProps = async (files) => {
@@ -16,16 +17,48 @@ export const getPdfsProps = async (files) => {
     const href = URL.createObjectURL(file);
     let pagesCount;
     let sizes;
+    let description;
     try {
       if (pdf) {
         pagesCount = pdf.getPageCount();
         sizes = pdf.getPages().map((currPage) => {
           const { width, height } = currPage.getSize();
-          const a = Math.ceil(width / 2.8347);
-          const b = Math.ceil(height / 2.8347);
-          const result = a > b ? `${a}x${b}` : `${b}x${a}`;
+
+          let a = Math.max(
+            Math.ceil(width / 2.8375),
+            Math.ceil(height / 2.8375)
+          );
+          let b = Math.min(
+            Math.ceil(width / 2.8375),
+            Math.ceil(height / 2.8375)
+          );
+
+          for (let i = 0; i < defaultSizes.length; i++) {
+            if (a !== defaultSizes[i]) {
+              if (defaultSizes[i] + 10 <= a && defaultSizes[i] - 10 >= a) {
+                a = defaultSizes[i];
+              }
+            }
+            if (b !== defaultSizes[i]) {
+              if (defaultSizes[i] - 10 <= b && defaultSizes[i] + 10 >= b) {
+                b = defaultSizes[i];
+              }
+            }
+          }
+          if (a < defaultSizes[1]) {
+            a = defaultSizes[1];
+          }
+          if (b < defaultSizes[0]) {
+            b = defaultSizes[0];
+          }
+
+          const result = `${a}×${b}`;
           return result;
         });
+        description = sizes.reduce((accum, item, index) => {
+          accum[item] = accum[item] ? [...accum[item], index + 1] : [index + 1];
+          return accum;
+        }, {});
       } else {
         pagesCount = 0;
       }
@@ -38,6 +71,7 @@ export const getPdfsProps = async (files) => {
       name,
       href,
       sizes,
+      description,
     };
 
     const folderName = pathArray[pathArray.length - 1];
@@ -59,7 +93,7 @@ export const getAmountsPdfProps = (pdfsProps) => {
   }, {});
 
   const badFiles = Object.entries(pdfsProps).reduce((accum, item) => {
-    return item.pagesCount ? accum : accum++;
+    return item[1].pagesCount ? accum : accum + 1;
   }, 0);
 
   return { sizes, badFiles };
