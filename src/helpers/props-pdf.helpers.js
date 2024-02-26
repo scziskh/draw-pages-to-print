@@ -21,10 +21,10 @@ export const getPdfsProps = async (files) => {
     let description;
     try {
       if (pdf) {
-        const canvases = convertPdfToCanvases(href);
-        console.log(canvases);
+        const canvases = await convertPdfToCanvases(href);
+
         pagesCount = pdf.getPageCount();
-        sizes = pdf.getPages().map((currPage) => {
+        sizes = pdf.getPages().map((currPage, index) => {
           const { width, height } = currPage.getSize();
 
           let a = Math.max(
@@ -55,7 +55,10 @@ export const getPdfsProps = async (files) => {
             b = defaultSizes[0];
           }
 
-          const result = `${a}×${b}`;
+          const colorPage = getPageColor(canvases[index]);
+          const c = colorPage ? "Кольоровий" : "Чорно-білий";
+
+          const result = `${a}×${b} ${c}`;
           return result;
         });
         description = sizes.reduce((accum, item, index) => {
@@ -100,4 +103,21 @@ export const getAmountsPdfProps = (pdfsProps) => {
   }, 0);
 
   return { sizes, badFiles };
+};
+
+const getPageColor = (canvas) => {
+  const ctx = canvas.getContext("2d");
+  console.log(ctx);
+  for (let k = 1; k < canvas.width; k++) {
+    for (let j = 1; j < canvas.height; j++) {
+      const color = ctx.getImageData(k, j, 1, 1).data;
+      if (
+        Math.abs(+color[0] - +color[1]) > 10 ||
+        Math.abs(+color[1] - +color[2]) > 10
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
 };
