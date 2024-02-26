@@ -30,12 +30,14 @@ const TableResult = (props) => {
     <Wrapper>
       <Grid>{firstRow}</Grid>
       {ammountsPdfsProps.coloredSizes &&
-        Object?.keys(ammountsPdfsProps.coloredSizes)?.map((key) => (
-          <Grid key={key}>
-            <Div>{key}</Div>
-            <Div>{ammountsPdfsProps.coloredSizes[key]}</Div>
-          </Grid>
-        ))}
+        Object?.keys(ammountsPdfsProps.coloredSizes)
+          ?.sort()
+          ?.map((key) => (
+            <Grid key={key}>
+              <Div>{key}</Div>
+              <Div>{ammountsPdfsProps.coloredSizes[key]}</Div>
+            </Grid>
+          ))}
     </Wrapper>
   );
 };

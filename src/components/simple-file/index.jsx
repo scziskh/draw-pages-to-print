@@ -42,7 +42,7 @@ const SimpleFile = ({ props, index }) => {
         }
       </FileName>
       <div>
-        {coloredSizes?.map((item) => (
+        {coloredSizes?.sort()?.map((item) => (
           <div key={item}>
             <strong>{item}: </strong>
             {pdfsProps[index]?.description?.coloredSizes[item]
@@ -61,7 +61,7 @@ const SimpleFile = ({ props, index }) => {
         ))}
       </div>
       <div>
-        {sizes?.map((item) => (
+        {sizes?.sort()?.map((item) => (
           <div key={item}>
             <strong>{item}: </strong>
             {pdfsProps[index]?.description.sizes[item]
