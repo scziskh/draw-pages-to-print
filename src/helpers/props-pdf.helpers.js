@@ -23,11 +23,11 @@ export const getPdfsProps = async (files, status, setStatus) => {
     let description = {};
     try {
       if (pdf) {
-        setStatus(`Обчислюємо колір сторінок у файлі ${file.name}`);
-        const canvases = await convertPdfToCanvases(href);
+        const canvases = await convertPdfToCanvases(href, file.name, setStatus);
 
         pagesCount = pdf.getPageCount();
-        pdf.getPages().map((currPage, index) => {
+        // eslint-disable-next-line array-callback-return
+        pdf.getPages().map(async (currPage, index) => {
           const { width, height } = currPage.getSize();
 
           let a = Math.max(
@@ -57,13 +57,12 @@ export const getPdfsProps = async (files, status, setStatus) => {
           if (b < defaultSizes[0]) {
             b = defaultSizes[0];
           }
-
-          const colorPage = getPageColor(canvases[index]);
+          const currCanvas = canvases[index + 1];
+          const colorPage = getPageColor(currCanvas, index);
           const c = colorPage ? "Кольоровий" : "Чорно-білий";
 
           coloredSizes.push(`${a}×${b} ${c}`);
           sizes.push(`${a}×${b}`);
-          return [coloredSizes, sizes];
         });
         description.coloredSizes = coloredSizes.reduce((accum, item, index) => {
           accum[item] = accum[item] ? [...accum[item], index + 1] : [index + 1];
@@ -121,14 +120,16 @@ export const getAmountsPdfProps = (pdfsProps) => {
   return { coloredSizes, sizes, badFiles };
 };
 
-const getPageColor = (canvas) => {
-  const ctx = canvas.getContext("2d");
+const getPageColor = (canvas, index) => {
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  console.log(`Обчислюємо колірність: Сторінка ${index}`);
   for (let k = 1; k < canvas.width; k++) {
     for (let j = 1; j < canvas.height; j++) {
       const color = ctx.getImageData(k, j, 1, 1).data;
       if (
         Math.abs(+color[0] - +color[1]) > 10 ||
-        Math.abs(+color[1] - +color[2]) > 10
+        Math.abs(+color[1] - +color[2]) > 10 ||
+        Math.abs(+color[2] - +color[0]) > 10
       ) {
         return true;
       }

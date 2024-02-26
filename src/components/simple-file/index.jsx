@@ -45,8 +45,8 @@ const SimpleFile = ({ props, index }) => {
         {coloredSizes?.map((item) => (
           <div key={item}>
             <strong>{item}: </strong>
-            {pdfsProps[index]?.description.coloredSizes[item]
-              ? pdfsProps[index].description.coloredSizes[item].map(
+            {pdfsProps[index]?.description?.coloredSizes[item]
+              ? pdfsProps[index].description?.coloredSizes[item].map(
                   (el, i, array) =>
                     i === 0 || el - array[i - 1] !== 1
                       ? i !== 0
