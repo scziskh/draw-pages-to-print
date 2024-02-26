@@ -1,16 +1,22 @@
 import styled from "styled-components";
 
-const Loader = () => (
+const Loader = (props) => (
   <Wrapper>
     <Circle />
+    <p>{props.status}</p>
   </Wrapper>
 );
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  height: 400;
+  height: 400px;
   justify-content: center;
   margin-left: -25%;
+  position: relative;
+  p {
+    position: absolute;
+    bottom: 15px;
+  }
 `;
 const Circle = styled.div`
   margin-top: 100px;

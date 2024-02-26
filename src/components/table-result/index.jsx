@@ -11,6 +11,8 @@ const TableResult = (props) => {
     () => setAmmountsPdfsProps(getAmountsPdfProps(pdfsProps)),
     [pdfsProps]
   );
+
+  useEffect(() => console.log(ammountsPdfsProps), [ammountsPdfsProps]);
   const badFiles = { background: `red` };
   const firstRow = ammountsPdfsProps[`badFiles`] ? (
     <>
@@ -27,11 +29,11 @@ const TableResult = (props) => {
   return (
     <Wrapper>
       <Grid>{firstRow}</Grid>
-      {ammountsPdfsProps.sizes &&
-        Object?.keys(ammountsPdfsProps.sizes)?.map((key) => (
+      {ammountsPdfsProps.coloredSizes &&
+        Object?.keys(ammountsPdfsProps.coloredSizes)?.map((key) => (
           <Grid key={key}>
             <Div>{key}</Div>
-            <Div>{ammountsPdfsProps.sizes[key]}</Div>
+            <Div>{ammountsPdfsProps.coloredSizes[key]}</Div>
           </Grid>
         ))}
     </Wrapper>

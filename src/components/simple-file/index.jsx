@@ -10,8 +10,13 @@ const SimpleFile = ({ props, index }) => {
   const pdfsProps = useSelector((state) => state.pdfPropsReducer);
   const { updatePdfProps } = pdfsPropsSlice.actions;
   const dispatch = useDispatch();
+  const [coloredSizes, setColoredSizes] = useState([]);
   const [sizes, setSizes] = useState([]);
 
+  useEffect(
+    () => setColoredSizes(Array.from(new Set(pdfsProps[index]?.coloredSizes))),
+    [pdfsProps, index]
+  );
   useEffect(
     () => setSizes(Array.from(new Set(pdfsProps[index]?.sizes))),
     [pdfsProps, index]
@@ -37,11 +42,30 @@ const SimpleFile = ({ props, index }) => {
         }
       </FileName>
       <div>
+        {coloredSizes?.map((item) => (
+          <div key={item}>
+            <strong>{item}: </strong>
+            {pdfsProps[index]?.description.coloredSizes[item]
+              ? pdfsProps[index].description.coloredSizes[item].map(
+                  (el, i, array) =>
+                    i === 0 || el - array[i - 1] !== 1
+                      ? i !== 0
+                        ? `, ${el}`
+                        : el
+                      : array[i + 1] - el !== 1
+                      ? -el
+                      : ""
+                )
+              : ""}
+          </div>
+        ))}
+      </div>
+      <div>
         {sizes?.map((item) => (
           <div key={item}>
             <strong>{item}: </strong>
-            {pdfsProps[index]?.description[item]
-              ? pdfsProps[index].description[item].map((el, i, array) =>
+            {pdfsProps[index]?.description.sizes[item]
+              ? pdfsProps[index].description.sizes[item].map((el, i, array) =>
                   i === 0 || el - array[i - 1] !== 1
                     ? i !== 0
                       ? `, ${el}`
@@ -61,7 +85,8 @@ const SimpleFile = ({ props, index }) => {
 
 const Wrapper = styled.form`
   display: grid;
-  grid-template-columns: 1fr 4fr 100px;
+  gap: 24px;
+  grid-template-columns: 1fr 4fr 2fr 100px;
   padding: 10px;
   border: 1px solid #212121;
   background-color: ${(props) => {

@@ -2,10 +2,11 @@ import { defaultSizes } from "./config";
 import { convertPdfToCanvases } from "./pdf-dist.helpers";
 import { getPdf } from "./pdf-lib.helpers";
 
-export const getPdfsProps = async (files) => {
+export const getPdfsProps = async (files, status, setStatus) => {
   return Object.keys(files)?.reduce(async (accum, key) => {
     const temp = await accum;
     const file = files[key];
+    setStatus(`Завантажуємо файл ${file.name}`);
     const webkitRelativePath = file.webkitRelativePath;
     const pathArray =
       webkitRelativePath === "" ? [] : webkitRelativePath.split(`/`);
@@ -17,14 +18,16 @@ export const getPdfsProps = async (files) => {
 
     const href = URL.createObjectURL(file);
     let pagesCount;
-    let sizes;
-    let description;
+    let coloredSizes = [];
+    let sizes = [];
+    let description = {};
     try {
       if (pdf) {
+        setStatus(`Обчислюємо колір сторінок у файлі ${file.name}`);
         const canvases = await convertPdfToCanvases(href);
 
         pagesCount = pdf.getPageCount();
-        sizes = pdf.getPages().map((currPage, index) => {
+        pdf.getPages().map((currPage, index) => {
           const { width, height } = currPage.getSize();
 
           let a = Math.max(
@@ -58,10 +61,15 @@ export const getPdfsProps = async (files) => {
           const colorPage = getPageColor(canvases[index]);
           const c = colorPage ? "Кольоровий" : "Чорно-білий";
 
-          const result = [`${a}×${b}`, c];
-          return result;
+          coloredSizes.push(`${a}×${b} ${c}`);
+          sizes.push(`${a}×${b}`);
+          return [coloredSizes, sizes];
         });
-        description = sizes.reduce((accum, item, index) => {
+        description.coloredSizes = coloredSizes.reduce((accum, item, index) => {
+          accum[item] = accum[item] ? [...accum[item], index + 1] : [index + 1];
+          return accum;
+        }, {});
+        description.sizes = sizes.reduce((accum, item, index) => {
           accum[item] = accum[item] ? [...accum[item], index + 1] : [index + 1];
           return accum;
         }, {});
@@ -76,6 +84,7 @@ export const getPdfsProps = async (files) => {
       pagesCount,
       name,
       href,
+      coloredSizes,
       sizes,
       description,
     };
@@ -90,8 +99,15 @@ export const getPdfsProps = async (files) => {
 };
 
 export const getAmountsPdfProps = (pdfsProps) => {
+  const coloredSizesArr = Object.entries(pdfsProps).reduce((accum, item) => {
+    return item[1].coloredSizes ? item[1].coloredSizes.concat(accum) : accum;
+  }, []);
+  const coloredSizes = coloredSizesArr.reduce((accum, item) => {
+    accum[item] = accum[item] ? (accum[item] += 1) : 1;
+    return accum;
+  }, {});
   const sizesArr = Object.entries(pdfsProps).reduce((accum, item) => {
-    return item[1].sizes[0] ? item[1].sizes.concat(accum) : accum;
+    return item[1].sizes ? item[1].sizes.concat(accum) : accum;
   }, []);
   const sizes = sizesArr.reduce((accum, item) => {
     accum[item] = accum[item] ? (accum[item] += 1) : 1;
@@ -102,12 +118,11 @@ export const getAmountsPdfProps = (pdfsProps) => {
     return item[1].pagesCount ? accum : accum + 1;
   }, 0);
 
-  return { sizes, badFiles };
+  return { coloredSizes, sizes, badFiles };
 };
 
 const getPageColor = (canvas) => {
   const ctx = canvas.getContext("2d");
-  console.log(ctx);
   for (let k = 1; k < canvas.width; k++) {
     for (let j = 1; j < canvas.height; j++) {
       const color = ctx.getImageData(k, j, 1, 1).data;

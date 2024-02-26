@@ -11,6 +11,7 @@ const Content = (props) => {
   const [files, setFiles] = useState(null); // curr files in input files
   const [pdfsProps, setPdfsProps] = useState({}); // properties of pdf files
   const [isLoading, setIsLoading] = useState(false); // if isLoading - true, else - false
+  const [status, setStatus] = useState(null);
 
   const ref = useRef();
 
@@ -30,7 +31,7 @@ const Content = (props) => {
   //set pdf props
   useEffect(() => {
     const setterPdfsProps = async () => {
-      const currPdfsProps = await getPdfsProps(files);
+      const currPdfsProps = await getPdfsProps(files, status, setStatus);
 
       setPdfsProps((state) => {
         const result = Object.assign(state, currPdfsProps);
@@ -99,7 +100,7 @@ const Content = (props) => {
       </FileContainer>
       <FixedHeightDiv>
         {isLoading ? (
-          <Loader />
+          <Loader status={status} />
         ) : (
           <>
             <TableResult totalFiles={numFiles} />
