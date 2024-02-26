@@ -126,7 +126,7 @@ export const getAmountsPdfProps = (pdfsProps) => {
 
 const getPageColor = (canvas, index) => {
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  console.log(`Обчислюємо колірність: Сторінка ${index}`);
+  console.log(`Обчислюємо колірність: Сторінка ${index + 1}`);
   for (let k = 1; k < canvas.width; k++) {
     for (let j = 1; j < canvas.height; j++) {
       const color = ctx.getImageData(k, j, 1, 1).data;

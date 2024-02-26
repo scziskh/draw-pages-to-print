@@ -15,7 +15,7 @@ export const convertPdfToCanvases = async (url, fileName, setStatus) =>
 
     for (let i = 1; i < doc.numPages + 1; i++) {
       const page = await doc.getPage(i);
-      const viewport = page.getViewport({ scale: 0.1 });
+      const viewport = page.getViewport({ scale: 0.05 });
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       canvas.width = viewport.width;
