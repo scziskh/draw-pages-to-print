@@ -58,7 +58,7 @@ export const getPdfsProps = async (files) => {
           const colorPage = getPageColor(canvases[index]);
           const c = colorPage ? "Кольоровий" : "Чорно-білий";
 
-          const result = `${a}×${b} ${c}`;
+          const result = [`${a}×${b}`, c];
           return result;
         });
         description = sizes.reduce((accum, item, index) => {
@@ -91,7 +91,7 @@ export const getPdfsProps = async (files) => {
 
 export const getAmountsPdfProps = (pdfsProps) => {
   const sizesArr = Object.entries(pdfsProps).reduce((accum, item) => {
-    return item[1].sizes ? item[1].sizes.concat(accum) : accum;
+    return item[1].sizes[0] ? item[1].sizes.concat(accum) : accum;
   }, []);
   const sizes = sizesArr.reduce((accum, item) => {
     accum[item] = accum[item] ? (accum[item] += 1) : 1;
