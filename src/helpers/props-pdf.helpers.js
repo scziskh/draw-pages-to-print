@@ -38,6 +38,7 @@ export const getPdfsProps = async (files, status, setStatus) => {
             Math.ceil(width / 2.8375),
             Math.ceil(height / 2.8375)
           );
+          let c = "";
 
           for (let i = 0; i < defaultSizes.length; i++) {
             if (a !== defaultSizes[i]) {
@@ -58,10 +59,13 @@ export const getPdfsProps = async (files, status, setStatus) => {
             b = defaultSizes[0];
           }
           const currCanvas = canvases[index + 1];
-          const colorPage = getPageColor(currCanvas, index);
-          const c = colorPage ? "Кольоровий" : "Чорно-білий";
 
-          coloredSizes.push(`${a}×${b} ${c}`);
+          if (a < 450) {
+            const colorPage = getPageColor(currCanvas, index);
+            c = colorPage ? " Кольоровий" : " Чорно-білий";
+          }
+
+          coloredSizes.push(`${a}×${b}${c}`);
           sizes.push(`${a}×${b}`);
         });
         description.coloredSizes = coloredSizes.reduce((accum, item, index) => {
@@ -128,8 +132,7 @@ const getPageColor = (canvas, index) => {
       const color = ctx.getImageData(k, j, 1, 1).data;
       if (
         Math.abs(+color[0] - +color[1]) > 10 ||
-        Math.abs(+color[1] - +color[2]) > 10 ||
-        Math.abs(+color[2] - +color[0]) > 10
+        Math.abs(+color[1] - +color[2]) > 10
       ) {
         return true;
       }
