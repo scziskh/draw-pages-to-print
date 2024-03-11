@@ -42,7 +42,7 @@ export const getPdfsProps = async (files, status, setStatus) => {
 
           for (let i = 0; i < defaultSizes.length; i++) {
             if (a !== defaultSizes[i]) {
-              if (defaultSizes[i] + 10 <= a && defaultSizes[i] - 10 >= a) {
+              if (defaultSizes[i] - 10 <= a && defaultSizes[i] + 10 >= a) {
                 a = defaultSizes[i];
               }
             }
