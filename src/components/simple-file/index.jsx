@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { pdfsPropsSlice } from "../../redux/reducers/fileList";
 
 const SimpleFile = ({ props, index }) => {
+  useEffect(() => console.log({ props, index }), [props, index]);
   const [isLoading, setIsLoading] = useState(false);
 
   const pdfsProps = useSelector((state) => state.pdfPropsReducer);

@@ -1,5 +1,5 @@
 import { defaultSizes } from "./config";
-import { convertPdfToCanvases } from "./pdf-dist.helpers";
+import { convertPdfToCanvases, getDistPDF } from "./pdf-dist.helpers";
 import { getPdf } from "./pdf-lib.helpers";
 
 export const getPdfsProps = async (files, status, setStatus) => {
@@ -23,20 +23,27 @@ export const getPdfsProps = async (files, status, setStatus) => {
     let description = {};
     try {
       if (pdf) {
-        const canvases = await convertPdfToCanvases(href, file.name, setStatus);
+        const distPDF = await getDistPDF(href);
+        const canvases = await convertPdfToCanvases(
+          distPDF,
+          file.name,
+          setStatus
+        );
 
-        pagesCount = pdf.getPageCount();
-        // eslint-disable-next-line array-callback-return
-        pdf.getPages().map(async (currPage, index) => {
-          const { width, height } = currPage.getSize();
+        pagesCount = distPDF.numPages;
 
+        for (let index = 0; index < distPDF.numPages; index++) {
+          const { width, height } = (
+            await distPDF.getPage(index + 1)
+          ).getViewport({ scale: 1 });
+          console.log(width);
           let a = Math.max(
-            Math.ceil(width / 2.8375),
-            Math.ceil(height / 2.8375)
+            Math.ceil(width / 2.83485),
+            Math.ceil(height / 2.83485)
           );
           let b = Math.min(
-            Math.ceil(width / 2.8375),
-            Math.ceil(height / 2.8375)
+            Math.ceil(width / 2.83485),
+            Math.ceil(height / 2.83485)
           );
           let c = "";
 
@@ -67,7 +74,7 @@ export const getPdfsProps = async (files, status, setStatus) => {
 
           coloredSizes.push(`${a}×${b}${c}`);
           sizes.push(`${a}×${b}`);
-        });
+        }
         description.coloredSizes = coloredSizes.reduce((accum, item, index) => {
           accum[item] = accum[item] ? [...accum[item], index + 1] : [index + 1];
           return accum;
@@ -79,7 +86,8 @@ export const getPdfsProps = async (files, status, setStatus) => {
       } else {
         pagesCount = 0;
       }
-    } catch {
+    } catch (e) {
+      console.error(e);
       pagesCount = 0;
     }
 

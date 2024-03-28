@@ -2,15 +2,8 @@ import { pdfjs } from "react-pdf";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
 
-export const convertPdfToCanvases = async (url, fileName, setStatus) =>
+export const convertPdfToCanvases = async (doc, fileName, setStatus) =>
   new Promise(async (resolve, reject) => {
-    const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
-    const fileArray = new Uint8Array(existingPdfBytes);
-    const doc = await pdfjs.getDocument({
-      data: fileArray,
-      useSystemFonts: true,
-    }).promise;
-
     const pages = {};
 
     for (let i = 1; i < doc.numPages + 1; i++) {
@@ -37,3 +30,13 @@ export const convertPdfToCanvases = async (url, fileName, setStatus) =>
       });
     }
   });
+
+export const getDistPDF = async (url) => {
+  const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
+  const fileArray = new Uint8Array(existingPdfBytes);
+  const doc = await pdfjs.getDocument({
+    data: fileArray,
+    useSystemFonts: true,
+  }).promise;
+  return doc;
+};
