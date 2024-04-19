@@ -12,7 +12,6 @@ const TableResult = (props) => {
     [pdfsProps]
   );
 
-  useEffect(() => console.log(ammountsPdfsProps), [ammountsPdfsProps]);
   const badFiles = { background: `red` };
   const firstRow = ammountsPdfsProps[`badFiles`] ? (
     <>
@@ -21,6 +20,8 @@ const TableResult = (props) => {
     </>
   ) : (
     <>
+      <Div>Загальна площа:</Div>
+      <Div> {Math.ceil(ammountsPdfsProps?.area * 1000) / 1000}</Div>
       <Div>Формат</Div>
       <Div>Кількість</Div>
     </>

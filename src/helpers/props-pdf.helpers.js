@@ -21,6 +21,7 @@ export const getPdfsProps = async (files, status, setStatus) => {
     let coloredSizes = [];
     let sizes = [];
     let description = {};
+    const area = [];
     try {
       if (pdf) {
         const distPDF = await getDistPDF(href);
@@ -36,7 +37,6 @@ export const getPdfsProps = async (files, status, setStatus) => {
           const { width, height } = (
             await distPDF.getPage(index + 1)
           ).getViewport({ scale: 1 });
-          console.log(width);
           let a = Math.max(
             Math.ceil(width / 2.83485),
             Math.ceil(height / 2.83485)
@@ -74,11 +74,19 @@ export const getPdfsProps = async (files, status, setStatus) => {
 
           coloredSizes.push(`${a}×${b}${c}`);
           sizes.push(`${a}×${b}`);
+          area.push((a * b) / 1000000);
         }
+
         description.coloredSizes = coloredSizes.reduce((accum, item, index) => {
           accum[item] = accum[item] ? [...accum[item], index + 1] : [index + 1];
           return accum;
         }, {});
+
+        description.area = area.reduce((accum, item, index) => {
+          accum[item] = accum[item] ? [...accum[item], index + 1] : [index + 1];
+          return accum;
+        }, {});
+
         description.sizes = sizes.reduce((accum, item, index) => {
           accum[item] = accum[item] ? [...accum[item], index + 1] : [index + 1];
           return accum;
@@ -98,6 +106,7 @@ export const getPdfsProps = async (files, status, setStatus) => {
       coloredSizes,
       sizes,
       description,
+      area,
     };
 
     const folderName = pathArray[pathArray.length - 1];
@@ -128,8 +137,11 @@ export const getAmountsPdfProps = (pdfsProps) => {
   const badFiles = Object.entries(pdfsProps).reduce((accum, item) => {
     return item[1].pagesCount ? accum : accum + 1;
   }, 0);
+  const area = Object.entries(pdfsProps).reduce((accum, item) => {
+    return item[1].area ? accum + +item[1].area : accum;
+  }, 0);
 
-  return { coloredSizes, sizes, badFiles };
+  return { coloredSizes, sizes, badFiles, area };
 };
 
 const getPageColor = (canvas, index) => {

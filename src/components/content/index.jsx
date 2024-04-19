@@ -7,7 +7,7 @@ import Path from "../path";
 import SimpleFile from "../simple-file";
 import TableResult from "../table-result";
 
-const Content = (props) => {
+const Content = () => {
   const [files, setFiles] = useState(null); // curr files in input files
   const [pdfsProps, setPdfsProps] = useState({}); // properties of pdf files
   const [isLoading, setIsLoading] = useState(false); // if isLoading - true, else - false
@@ -21,6 +21,8 @@ const Content = (props) => {
       ref.current.setAttribute("webkitdirectory", "");
     }
   }, [ref]);
+
+  useEffect(() => console.log(pdfsProps.area), [pdfsProps]);
 
   // action when file(s) choosed
   const handleFileChange = (e) => {
