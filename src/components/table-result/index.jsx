@@ -7,9 +7,10 @@ import { useState } from "react";
 const TableResult = (props) => {
   const pdfsProps = useSelector((state) => state.pdfPropsReducer);
   const [ammountsPdfsProps, setAmmountsPdfsProps] = useState({});
+  useEffect(() => console.log(pdfsProps), [pdfsProps]);
   useEffect(
     () => setAmmountsPdfsProps(getAmountsPdfProps(pdfsProps)),
-    [pdfsProps]
+    [pdfsProps],
   );
 
   const badFiles = { background: `red` };

@@ -28,7 +28,7 @@ export const getPdfsProps = async (files, status, setStatus) => {
         const canvases = await convertPdfToCanvases(
           distPDF,
           file.name,
-          setStatus
+          setStatus,
         );
 
         pagesCount = distPDF.numPages;
@@ -39,11 +39,11 @@ export const getPdfsProps = async (files, status, setStatus) => {
           ).getViewport({ scale: 1 });
           let a = Math.max(
             Math.ceil(width / 2.83485),
-            Math.ceil(height / 2.83485)
+            Math.ceil(height / 2.83485),
           );
           let b = Math.min(
             Math.ceil(width / 2.83485),
-            Math.ceil(height / 2.83485)
+            Math.ceil(height / 2.83485),
           );
           let c = "";
 
@@ -138,9 +138,11 @@ export const getAmountsPdfProps = (pdfsProps) => {
     return item[1].pagesCount ? accum : accum + 1;
   }, 0);
   const area = Object.entries(pdfsProps).reduce((accum, item) => {
-    return item[1].area ? accum + +item[1].area : accum;
+    console.log(item);
+    return item[1].area
+      ? accum + +item[1].area.reduce((acc, cur) => acc + cur, 0)
+      : accum;
   }, 0);
-
   return { coloredSizes, sizes, badFiles, area };
 };
 

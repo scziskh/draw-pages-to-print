@@ -15,11 +15,11 @@ const SimpleFile = ({ props, index }) => {
 
   useEffect(
     () => setColoredSizes(Array.from(new Set(pdfsProps[index]?.coloredSizes))),
-    [pdfsProps, index]
+    [pdfsProps, index],
   );
   useEffect(
     () => setSizes(Array.from(new Set(pdfsProps[index]?.sizes))),
-    [pdfsProps, index]
+    [pdfsProps, index],
   );
 
   const { getValues } = useForm({
@@ -41,52 +41,52 @@ const SimpleFile = ({ props, index }) => {
           </a>
         }
       </FileName>
-      <div>
-        {coloredSizes?.sort()?.map((item) => (
-          <div key={item}>
-            <strong>{item}: </strong>
-            {pdfsProps[index]?.description?.coloredSizes[item]
-              ? pdfsProps[index].description?.coloredSizes[item].map(
-                  (el, i, array) =>
-                    i === 0 || el - array[i - 1] !== 1
-                      ? i !== 0
-                        ? `, ${el}`
-                        : el
-                      : array[i + 1] - el !== 1
-                      ? -el
-                      : ""
-                )
-              : ""}
-          </div>
-        ))}
-      </div>
-      <div>
-        {sizes?.sort()?.map((item) => (
-          <div key={item}>
-            <strong>{item}: </strong>
-            {pdfsProps[index]?.description.sizes[item]
-              ? pdfsProps[index].description.sizes[item].map((el, i, array) =>
-                  i === 0 || el - array[i - 1] !== 1
-                    ? i !== 0
-                      ? `, ${el}`
-                      : el
-                    : array[i + 1] - el !== 1
-                    ? -el
-                    : ""
-                )
-              : ""}
-          </div>
-        ))}
-      </div>
-      <PagesNumber>{pdfsProps?.[index]?.pagesCount}</PagesNumber>
+      <AboutFile>
+        <div>
+          {sizes?.sort()?.map((item) => (
+            <div key={item}>
+              <strong>{item}: </strong>
+              {pdfsProps[index]?.description.sizes[item]
+                ? pdfsProps[index].description.sizes[item].map(
+                    (el, i, array) =>
+                      i === 0 || el - array[i - 1] !== 1
+                        ? i !== 0
+                          ? `, ${el}`
+                          : el
+                        : array[i + 1] - el !== 1
+                          ? -el
+                          : "",
+                  )
+                : ""}
+            </div>
+          ))}
+        </div>
+        <div>
+          {coloredSizes?.sort()?.map((item) => (
+            <div key={item}>
+              <strong>{item}: </strong>
+              {pdfsProps[index]?.description?.coloredSizes[item]
+                ? pdfsProps[index].description?.coloredSizes[item].map(
+                    (el, i, array) =>
+                      i === 0 || el - array[i - 1] !== 1
+                        ? i !== 0
+                          ? `, ${el}`
+                          : el
+                        : array[i + 1] - el !== 1
+                          ? -el
+                          : "",
+                  )
+                : ""}
+            </div>
+          ))}
+        </div>
+        <PagesNumber>{pdfsProps?.[index]?.pagesCount}</PagesNumber>
+      </AboutFile>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.form`
-  display: grid;
-  gap: 24px;
-  grid-template-columns: 1fr 4fr 2fr 100px;
   padding: 10px;
   border: 1px solid #212121;
   background-color: ${(props) => {
@@ -104,13 +104,23 @@ const FileName = styled.div`
   overflow: hidden;
   padding: 10px;
   white-space: nowrap;
+  text-align: center;
+  background-color: #eee;
 `;
 const PagesNumber = styled.div`
   position: relative;
-  padding: 10px;
   width: 10%;
   text-align: center;
   font-weight: bold;
+`;
+
+const AboutFile = styled.div`
+  gap: 24px;
+  grid-template-columns: 2fr 4fr 100px;
+  display: grid;
+  & > div {
+    padding: 20px;
+  }
 `;
 
 export default SimpleFile;
